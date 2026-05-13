@@ -315,6 +315,23 @@
       text-transform: uppercase;
     }
 
+    .footer a {
+      position: relative;
+      color: var(--ink);
+    }
+
+    .footer a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -3px;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
     @media (max-width: 980px) {
       .hero,
       .frames,
@@ -416,7 +433,7 @@
 
     <footer class="footer">
       <span>Dawnerz Bridge mockup</span>
-      <span>© 2026 · developed by bonddesign</span>
+      <span>© 2026 · developed by <a href="https://bonddesign.top" target="_blank" rel="noopener">bonddesign</a></span>
     </footer>
   </div>
 </body>
