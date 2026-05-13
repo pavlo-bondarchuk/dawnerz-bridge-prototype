@@ -39,6 +39,8 @@
     }
 
     body {
+      --cursor-x: 50vw;
+      --cursor-y: 50vh;
       margin: 0;
       min-width: 320px;
       font-family: var(--sans);
@@ -51,6 +53,23 @@
       color: var(--ink);
       overflow-x: hidden;
     }
+
+    .grid-brush {
+      position: fixed;
+      z-index: 0;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      background:
+        linear-gradient(90deg, rgba(23, 26, 28, .085) 1px, transparent 1px) center top / calc((100vw - min(var(--max), calc(100vw - var(--gutter) * 2))) / 2 + min(var(--max), calc(100vw - var(--gutter) * 2)) / 12) 100%,
+        linear-gradient(0deg, rgba(23, 26, 28, .045) 1px, transparent 1px) center top / 100% 82px,
+        radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(61, 98, 114, .11), transparent 18rem);
+      -webkit-mask-image: radial-gradient(circle at var(--cursor-x) var(--cursor-y), #000 0 9rem, rgba(0, 0, 0, .68) 13rem, transparent 20rem);
+      mask-image: radial-gradient(circle at var(--cursor-x) var(--cursor-y), #000 0 9rem, rgba(0, 0, 0, .68) 13rem, transparent 20rem);
+      transition: opacity .55s var(--ease);
+    }
+
+    body.is-brushing .grid-brush { opacity: 1; }
 
     body.nav-open,
     body.modal-open { overflow: hidden; }
@@ -222,7 +241,10 @@
       min-height: 46px;
       padding: 0 20px;
       border: 1px solid var(--line-strong);
-      background: transparent;
+      background:
+        linear-gradient(110deg, rgba(255, 255, 255, .38), rgba(61, 98, 114, .05), rgba(155, 112, 66, .06));
+      background-size: 220% 100%;
+      background-position: 0 50%;
       color: var(--ink);
       font-size: 13px;
       font-weight: 700;
@@ -230,7 +252,7 @@
       white-space: nowrap;
       overflow: hidden;
       isolation: isolate;
-      transition: transform .7s var(--ease), border-color .7s var(--ease), color .7s var(--ease);
+      transition: transform .8s var(--ease), border-color .8s var(--ease), color .8s var(--ease), background-position .95s var(--ease);
     }
 
     .btn::before {
@@ -239,9 +261,10 @@
       z-index: -1;
       inset: -1px;
       background:
-        linear-gradient(105deg, var(--ink) 0 48%, var(--blue) 48% 72%, var(--olive) 72% 100%);
-      transform: translateX(-104%);
-      transition: transform .82s var(--ease);
+        linear-gradient(105deg, var(--ink) 0%, var(--blue) 46%, var(--olive) 74%, var(--bronze) 100%);
+      opacity: 0;
+      transform: translateX(-28%);
+      transition: transform .95s var(--ease), opacity .75s var(--ease);
     }
 
     .btn::after {
@@ -255,21 +278,28 @@
       transform: translateY(-2px);
       border-color: var(--ink);
       color: var(--paper-2);
+      background-position: 100% 50%;
     }
 
-    .btn:hover::before { transform: translateX(0); }
+    .btn:hover::before {
+      opacity: 1;
+      transform: translateX(0);
+    }
 
     .btn:hover::after { transform: translateX(4px); }
 
     .btn-primary {
-      border-color: var(--ink);
-      background: var(--ink);
+      border-color: rgba(23, 26, 28, .48);
+      background:
+        linear-gradient(112deg, #171a1c 0%, #233137 45%, #3d6272 72%, #596353 100%);
+      background-size: 190% 100%;
+      background-position: 0 50%;
       color: var(--paper-2);
     }
 
     .btn-primary::before {
       background:
-        linear-gradient(105deg, var(--blue) 0 40%, var(--olive) 40% 70%, var(--bronze) 70% 100%);
+        linear-gradient(105deg, rgba(61, 98, 114, .92) 0%, rgba(89, 99, 83, .94) 52%, rgba(155, 112, 66, .92) 100%);
     }
 
     .btn-primary:hover {
@@ -284,7 +314,11 @@
 
     .mobile-panel { display: none; }
 
-    main { overflow: hidden; }
+    main {
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
 
     .section {
       position: relative;
@@ -416,6 +450,23 @@
     .route-map .accent { stroke: var(--blue); stroke-width: 1.4; }
     .route-map .bronze { stroke: var(--bronze); }
     .route-map circle { fill: var(--paper-2); stroke: var(--ink); stroke-width: 1; }
+
+    .route-map .route-point {
+      cursor: grab;
+      pointer-events: auto;
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: r .35s var(--ease), stroke-width .35s var(--ease), filter .35s var(--ease), opacity .35s var(--ease);
+    }
+
+    .route-map .route-point:hover,
+    .route-map .route-point.is-dragging {
+      r: 8px;
+      stroke-width: 1.4;
+      filter: drop-shadow(0 8px 18px rgba(61, 98, 114, .22));
+    }
+
+    .route-map .route-point.is-dragging { cursor: grabbing; }
 
     .draw-line {
       stroke-dasharray: 1;
@@ -836,7 +887,11 @@
     }
 
     .cta-box {
+      --glow-offset: 72px;
+      --glow-offset-neg: -72px;
+      --glow-scale: .72;
       position: relative;
+      z-index: 0;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: clamp(26px, 5vw, 70px);
@@ -850,16 +905,36 @@
       box-shadow: var(--shadow);
     }
 
-    .cta-box::before {
+    .cta-box::before,
+    .cta-box::after {
       content: "";
-      width: 9px;
-      height: 9px;
       position: absolute;
-      top: -5px;
-      left: 50%;
-      border: 1px solid var(--line-strong);
-      background: var(--paper);
-      transform: rotate(45deg);
+      z-index: -1;
+      width: min(420px, 46%);
+      height: min(260px, 62%);
+      pointer-events: none;
+      opacity: calc(var(--motion-progress, 0) * .9);
+      filter: blur(34px);
+      transition: opacity .08s linear, transform .08s linear;
+    }
+
+    .cta-box::before {
+      top: -18%;
+      left: -8%;
+      background: radial-gradient(circle, rgba(61, 98, 114, .22), rgba(61, 98, 114, .08) 36%, transparent 70%);
+      transform: translate3d(var(--glow-offset), var(--glow-offset), 0) scale(var(--glow-scale));
+    }
+
+    .cta-box::after {
+      right: -9%;
+      bottom: -20%;
+      background: radial-gradient(circle, rgba(155, 112, 66, .18), rgba(89, 99, 83, .08) 42%, transparent 72%);
+      transform: translate3d(var(--glow-offset-neg), var(--glow-offset-neg), 0) scale(var(--glow-scale));
+    }
+
+    .cta-box > * {
+      position: relative;
+      z-index: 1;
     }
 
     .cta h2 {
@@ -879,6 +954,8 @@
     }
 
     .site-footer {
+      position: relative;
+      z-index: 1;
       border-top: 1px solid var(--line);
       padding: 38px 0 54px;
     }
@@ -1079,11 +1156,12 @@
       --motion-progress: 0;
       --motion-opacity: .58;
       --motion-blur: 4px;
+      --motion-x: 0px;
       --motion-y: 22px;
       --motion-scale: .985;
       opacity: var(--motion-opacity);
       filter: blur(var(--motion-blur));
-      transform: translate3d(0, var(--motion-y), 0) scale(var(--motion-scale));
+      transform: translate3d(var(--motion-x), var(--motion-y), 0) scale(var(--motion-scale));
       transition: opacity .08s linear, transform .08s linear, filter .08s linear;
       will-change: opacity, transform, filter;
     }
@@ -1098,12 +1176,14 @@
       --word-opacity: .55;
       --word-blur: 4px;
       --word-y: .14em;
+      --word-clip: 100%;
       display: inline-block;
       opacity: var(--word-opacity);
       filter: blur(var(--word-blur));
+      clip-path: inset(0 var(--word-clip) 0 0);
       transform: translate3d(0, var(--word-y), 0);
-      transition: opacity .08s linear, transform .08s linear, filter .08s linear;
-      will-change: opacity, transform, filter;
+      transition: opacity .08s linear, transform .08s linear, filter .08s linear, clip-path .08s linear;
+      will-change: opacity, transform, filter, clip-path;
     }
 
     @media (max-width: 1060px) {
@@ -1302,14 +1382,17 @@
       .word-reveal .word {
         opacity: 1;
         filter: none;
+        clip-path: none;
         transform: none;
       }
 
+      .grid-brush { display: none; }
       .draw-line { stroke-dashoffset: 0; }
     }
   </style>
 </head>
 <body>
+  <div class="grid-brush" aria-hidden="true"></div>
   <header class="site-header" id="top">
     <div class="header-inner">
       <a class="brand" href="#top" aria-label="Dawnerz Bridge home">
@@ -1368,13 +1451,13 @@
           <line x1="0" y1="116" x2="520" y2="116"></line>
           <line x1="0" y1="306" x2="520" y2="306"></line>
           <line x1="0" y1="486" x2="520" y2="486"></line>
-          <path class="draw-line accent" pathLength="1" d="M64 456 C142 260 208 214 318 198 C396 186 446 146 474 78"></path>
-          <path class="draw-line bronze" pathLength="1" d="M78 126 C150 246 240 284 333 318 C398 342 446 398 476 520"></path>
-          <path class="draw-line" pathLength="1" d="M44 330 C118 350 174 384 244 404 C326 428 396 398 488 350"></path>
-          <circle cx="78" cy="126" r="6"></circle>
-          <circle cx="318" cy="198" r="6"></circle>
-          <circle cx="476" cy="520" r="6"></circle>
-          <circle cx="244" cy="404" r="6"></circle>
+          <path id="route-accent" class="draw-line accent" pathLength="1" d="M64 456 C142 260 208 214 318 198 C396 186 446 146 474 78"></path>
+          <path id="route-bronze" class="draw-line bronze" pathLength="1" d="M78 126 C150 246 240 284 333 318 C398 342 446 398 476 520"></path>
+          <path id="route-soft" class="draw-line" pathLength="1" d="M44 330 C118 350 174 384 244 404 C326 428 396 398 488 350"></path>
+          <circle class="route-point" data-route="route-bronze" cx="78" cy="126" r="6"></circle>
+          <circle class="route-point" data-route="route-accent" cx="318" cy="198" r="6"></circle>
+          <circle class="route-point" data-route="route-bronze" cx="476" cy="520" r="6"></circle>
+          <circle class="route-point" data-route="route-soft" cx="244" cy="404" r="6"></circle>
         </svg>
         <div class="panel-meta">
           <div><strong>UA</strong><span>виробники та постачання</span></div>
@@ -1623,34 +1706,73 @@
         ...document.querySelectorAll(".audience-card, .value-statement, .value-card, .format-card, .product-board, .product-note, .chip, .about-copy, .route-item, .cta-box")
       ])
     ];
-    const wordTargets = document.querySelectorAll(".section-title, .audience-card h3, .value-statement h3, .value-card h3, .format-card h3, .cta h2");
+    const wordTargets = document.querySelectorAll("#hero-title, .section-title, .audience-card h3, .value-statement h3, .value-card h3, .format-card h3, .cta h2");
 
-    document.querySelectorAll(".audience-card, .value-card, .format-card, .chip, .route-item").forEach((node, index) => {
-      node.style.setProperty("--stagger", String(index % 10));
-    });
-
-    wordTargets.forEach((node) => {
-      if (node.dataset.wordsReady) return;
-      const words = node.textContent.trim().split(/\s+/);
-      node.textContent = "";
-      node.classList.add("word-reveal");
-      node.dataset.wordsReady = "true";
-      words.forEach((word, index) => {
-        const span = document.createElement("span");
-        span.className = "word";
-        span.textContent = word;
-        span.style.setProperty("--word-index", String(index));
-        node.appendChild(span);
-        if (index < words.length - 1) node.append(" ");
+    [
+      ".audience-grid .audience-card",
+      ".value-list .value-card",
+      ".formats-grid .format-card",
+      ".chips .chip",
+      ".route-list .route-item"
+    ].forEach((selector) => {
+      document.querySelectorAll(selector).forEach((node, index) => {
+        node.style.setProperty("--stagger", String(index));
       });
     });
 
+    const wrapWords = (node) => {
+      let wordIndex = 0;
+      const fragmentWords = (text) => {
+        const fragment = document.createDocumentFragment();
+        text.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) {
+            fragment.append(part);
+            return;
+          }
+
+          const span = document.createElement("span");
+          span.className = "word";
+          span.textContent = part;
+          span.style.setProperty("--word-index", String(wordIndex));
+          wordIndex += 1;
+          fragment.append(span);
+        });
+        return fragment;
+      };
+
+      const walk = (current) => {
+        [...current.childNodes].forEach((child) => {
+          if (child.nodeType === Node.TEXT_NODE) {
+            child.replaceWith(fragmentWords(child.textContent));
+            return;
+          }
+          if (child.nodeType === Node.ELEMENT_NODE) walk(child);
+        });
+      };
+
+      walk(node);
+    };
+
+    wordTargets.forEach((node) => {
+      if (node.dataset.wordsReady) return;
+      node.classList.add("word-reveal");
+      node.dataset.wordsReady = "true";
+      wrapWords(node);
+    });
+
     const setMotionVars = (node, progress) => {
+      const sliding = node.matches(".chip, .route-item");
+      const xBase = sliding ? 30 : 0;
       node.style.setProperty("--motion-progress", progress.toFixed(3));
       node.style.setProperty("--motion-opacity", (0.58 + progress * 0.42).toFixed(3));
       node.style.setProperty("--motion-blur", `${((1 - progress) * 4).toFixed(2)}px`);
+      node.style.setProperty("--motion-x", `${((1 - progress) * xBase).toFixed(2)}px`);
       node.style.setProperty("--motion-y", `${((1 - progress) * 22).toFixed(2)}px`);
       node.style.setProperty("--motion-scale", (0.992 + progress * 0.008).toFixed(4));
+      node.style.setProperty("--glow-offset", `${((1 - progress) * 72).toFixed(2)}px`);
+      node.style.setProperty("--glow-offset-neg", `${((progress - 1) * 72).toFixed(2)}px`);
+      node.style.setProperty("--glow-scale", (0.72 + progress * 0.28).toFixed(3));
       node.classList.toggle("is-visible", progress > 0.34);
     };
 
@@ -1659,6 +1781,7 @@
       word.style.setProperty("--word-opacity", (0.55 + progress * 0.45).toFixed(3));
       word.style.setProperty("--word-blur", `${((1 - progress) * 4).toFixed(2)}px`);
       word.style.setProperty("--word-y", `${((1 - progress) * 0.14).toFixed(3)}em`);
+      word.style.setProperty("--word-clip", `${((1 - progress) * 100).toFixed(2)}%`);
     };
 
     const updateScrollMotion = () => {
@@ -1678,7 +1801,7 @@
         const rect = node.getBoundingClientRect();
         const stagger = Number(node.style.getPropertyValue("--stagger")) || 0;
         const raw = (viewportHeight * 0.95 - rect.top) / (viewportHeight * 0.28 + rect.height * 0.48);
-        const progress = clamp(raw - stagger * 0.026);
+        const progress = clamp(raw - stagger * 0.058);
         setMotionVars(node, progress);
       });
 
@@ -1686,7 +1809,7 @@
         const rect = node.getBoundingClientRect();
         const base = clamp((viewportHeight * 0.92 - rect.top) / (viewportHeight * 0.26 + rect.height * 0.65));
         node.querySelectorAll(".word").forEach((word, index) => {
-          const progress = clamp((base - index * 0.026) / 0.7);
+          const progress = clamp((base - index * 0.04) / 0.68);
           setWordVars(word, progress);
         });
       });
@@ -1744,20 +1867,117 @@
       });
     });
 
+    const gridBrush = document.querySelector(".grid-brush");
+    const canBrush = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    let brushTimer = 0;
+    if (gridBrush && canBrush) {
+      window.addEventListener("pointermove", (event) => {
+        document.body.style.setProperty("--cursor-x", `${event.clientX}px`);
+        document.body.style.setProperty("--cursor-y", `${event.clientY}px`);
+        document.body.classList.add("is-brushing");
+        window.clearTimeout(brushTimer);
+        brushTimer = window.setTimeout(() => document.body.classList.remove("is-brushing"), 520);
+      }, { passive: true });
+
+      window.addEventListener("pointerleave", () => {
+        document.body.classList.remove("is-brushing");
+      });
+    }
+
     const heroPanel = document.querySelector(".hero-panel");
+    const heroSection = document.querySelector(".hero");
     const canTilt = window.matchMedia("(hover: hover) and (pointer: fine)").matches && !motionQuery.matches;
-    if (heroPanel && canTilt) {
-      heroPanel.addEventListener("mousemove", (event) => {
-        const rect = heroPanel.getBoundingClientRect();
+    if (heroPanel && heroSection && canTilt) {
+      heroSection.addEventListener("mousemove", (event) => {
+        const rect = heroSection.getBoundingClientRect();
         const x = (event.clientX - rect.left) / rect.width - 0.5;
         const y = (event.clientY - rect.top) / rect.height - 0.5;
-        heroPanel.style.setProperty("--tilt-y", `${(x * 7).toFixed(2)}deg`);
-        heroPanel.style.setProperty("--tilt-x", `${(-y * 6).toFixed(2)}deg`);
+        heroPanel.style.setProperty("--tilt-y", `${(x * 8).toFixed(2)}deg`);
+        heroPanel.style.setProperty("--tilt-x", `${(-y * 6.5).toFixed(2)}deg`);
       });
 
-      heroPanel.addEventListener("mouseleave", () => {
+      heroSection.addEventListener("mouseleave", () => {
         heroPanel.style.setProperty("--tilt-y", "0deg");
         heroPanel.style.setProperty("--tilt-x", "0deg");
+      });
+    }
+
+    const routeSvg = document.querySelector(".route-map");
+    if (routeSvg && canTilt) {
+      const toSvgPoint = (event) => {
+        const point = routeSvg.createSVGPoint();
+        point.x = event.clientX;
+        point.y = event.clientY;
+        return point.matrixTransform(routeSvg.getScreenCTM().inverse());
+      };
+
+      const closestPointOnPath = (path, point) => {
+        const length = path.getTotalLength();
+        let closest = path.getPointAtLength(0);
+        let closestDistance = Infinity;
+        let closestLength = 0;
+
+        for (let i = 0; i <= 120; i += 1) {
+          const distanceOnPath = (length / 120) * i;
+          const sample = path.getPointAtLength(distanceOnPath);
+          const distance = Math.hypot(sample.x - point.x, sample.y - point.y);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closest = sample;
+            closestLength = distanceOnPath;
+          }
+        }
+
+        const refineStep = length / 120;
+        for (let i = 0; i < 5; i += 1) {
+          const beforeLength = clamp(closestLength - refineStep / (i + 1), 0, length);
+          const afterLength = clamp(closestLength + refineStep / (i + 1), 0, length);
+          [beforeLength, afterLength].forEach((distanceOnPath) => {
+            const sample = path.getPointAtLength(distanceOnPath);
+            const distance = Math.hypot(sample.x - point.x, sample.y - point.y);
+            if (distance < closestDistance) {
+              closestDistance = distance;
+              closest = sample;
+              closestLength = distanceOnPath;
+            }
+          });
+        }
+
+        return closest;
+      };
+
+      let activePoint = null;
+      let activePath = null;
+
+      const moveRoutePoint = (event) => {
+        if (!activePoint || !activePath) return;
+        const svgPoint = toSvgPoint(event);
+        const pointOnPath = closestPointOnPath(activePath, svgPoint);
+        activePoint.setAttribute("cx", pointOnPath.x.toFixed(2));
+        activePoint.setAttribute("cy", pointOnPath.y.toFixed(2));
+      };
+
+      routeSvg.querySelectorAll(".route-point").forEach((point) => {
+        point.addEventListener("pointerdown", (event) => {
+          activePoint = point;
+          activePath = routeSvg.querySelector(`#${point.dataset.route}`);
+          if (!activePath) return;
+          point.classList.add("is-dragging");
+          point.setPointerCapture(event.pointerId);
+          moveRoutePoint(event);
+        });
+
+        point.addEventListener("pointermove", moveRoutePoint);
+        point.addEventListener("pointerup", () => {
+          point.classList.remove("is-dragging");
+          activePoint = null;
+          activePath = null;
+        });
+        point.addEventListener("pointercancel", () => {
+          point.classList.remove("is-dragging");
+          activePoint = null;
+          activePath = null;
+        });
       });
     }
 
