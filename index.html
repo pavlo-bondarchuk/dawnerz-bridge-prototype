@@ -1,0 +1,1631 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dawnerz Bridge — Interactive Prototype</title>
+  <meta name="description" content="Dawnerz Bridge interactive homepage prototype for international B2B trade partnerships.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,50..100,0..1&family=Manrope:wght@300..800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f6f4ef;
+      --paper-2: #fbfaf7;
+      --ink: #171a1c;
+      --graphite: #292e31;
+      --muted: #687177;
+      --line: rgba(23, 26, 28, .13);
+      --line-strong: rgba(23, 26, 28, .24);
+      --blue: #3d6272;
+      --olive: #596353;
+      --bronze: #9b7042;
+      --steel: #7a8589;
+      --white: #ffffff;
+      --shadow: 0 28px 80px rgba(23, 26, 28, .08);
+      --sans: "Manrope", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --serif: "Fraunces", Georgia, "Times New Roman", serif;
+      --max: 1220px;
+      --gutter: clamp(20px, 4vw, 56px);
+      --ease: cubic-bezier(.22, 1, .36, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      font-family: var(--sans);
+      font-weight: 400;
+      letter-spacing: 0;
+      background:
+        linear-gradient(90deg, rgba(23, 26, 28, .035) 1px, transparent 1px) center top / calc((100vw - min(var(--max), calc(100vw - var(--gutter) * 2))) / 2 + min(var(--max), calc(100vw - var(--gutter) * 2)) / 12) 100%,
+        radial-gradient(circle at 80% 5%, rgba(61, 98, 114, .08), transparent 32rem),
+        var(--paper);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    body.nav-open,
+    body.modal-open { overflow: hidden; }
+
+    a { color: inherit; text-decoration: none; }
+
+    button {
+      border: 0;
+      border-radius: 0;
+      font: inherit;
+      color: inherit;
+      background: none;
+      cursor: pointer;
+    }
+
+    ::selection {
+      color: var(--paper-2);
+      background: var(--blue);
+    }
+
+    .site-header {
+      position: fixed;
+      z-index: 30;
+      top: 0;
+      left: 0;
+      right: 0;
+      border-bottom: 1px solid transparent;
+      transition: background .45s var(--ease), border-color .45s var(--ease), transform .45s var(--ease);
+    }
+
+    .site-header.is-scrolled {
+      border-color: var(--line);
+      background: rgba(246, 244, 239, .86);
+      backdrop-filter: blur(18px);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: min(var(--max), calc(100% - var(--gutter) * 2));
+      height: 82px;
+      margin: 0 auto;
+      gap: 28px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 188px;
+      font-weight: 700;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--line-strong);
+      background: rgba(255, 255, 255, .34);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 9px 6px;
+      border-top: 1px solid var(--ink);
+      transform: skewY(-24deg);
+    }
+
+    .brand-mark::after {
+      inset: 17px 6px;
+      border-color: var(--bronze);
+    }
+
+    .brand-name {
+      display: grid;
+      line-height: .92;
+      font-size: 13px;
+    }
+
+    .brand-name span:last-child {
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: .18em;
+      font-size: 10px;
+      margin-top: 4px;
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(16px, 2.3vw, 34px);
+      flex: 1;
+    }
+
+    .nav-link {
+      position: relative;
+      padding: 8px 0;
+      color: rgba(23, 26, 28, .72);
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1;
+      white-space: nowrap;
+      transition: color .35s var(--ease);
+    }
+
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform .45s var(--ease);
+    }
+
+    .nav-link:hover,
+    .nav-link.is-active { color: var(--ink); }
+
+    .nav-link:hover::after,
+    .nav-link.is-active::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .lang-switch {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      border: 1px solid var(--line);
+      padding: 3px;
+      background: rgba(255, 255, 255, .24);
+    }
+
+    .lang-switch button {
+      width: 34px;
+      height: 28px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      transition: color .3s var(--ease), background .3s var(--ease);
+    }
+
+    .lang-switch button:hover,
+    .lang-switch button.is-active {
+      color: var(--ink);
+      background: var(--white);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 20px;
+      border: 1px solid var(--line-strong);
+      background: transparent;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      transition: transform .35s var(--ease), border-color .35s var(--ease), background .35s var(--ease), color .35s var(--ease);
+    }
+
+    .btn::after {
+      content: "→";
+      margin-left: 12px;
+      transform: translateX(0);
+      transition: transform .35s var(--ease);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--ink);
+      background: var(--ink);
+      color: var(--paper-2);
+    }
+
+    .btn:hover::after { transform: translateX(4px); }
+
+    .btn-primary {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: var(--paper-2);
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .btn-ghost {
+      background: var(--paper);
+    }
+
+    .menu-toggle { display: none; }
+
+    .mobile-panel { display: none; }
+
+    main { overflow: hidden; }
+
+    .section {
+      position: relative;
+      width: min(var(--max), calc(100% - var(--gutter) * 2));
+      margin: 0 auto;
+      padding: clamp(86px, 11vw, 156px) 0;
+      border-top: 1px solid var(--line);
+      scroll-margin-top: 80px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.03fr) minmax(360px, .76fr);
+      min-height: 100vh;
+      padding-top: clamp(132px, 13vw, 190px);
+      padding-bottom: clamp(70px, 9vw, 120px);
+      border-top: 0;
+      gap: clamp(42px, 7vw, 96px);
+      align-items: end;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 30px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 42px;
+      height: 1px;
+      background: currentColor;
+      opacity: .55;
+    }
+
+    h1,
+    h2,
+    h3,
+    p { margin-top: 0; }
+
+    h1 {
+      max-width: 900px;
+      margin-bottom: 30px;
+      font-family: var(--serif);
+      font-size: clamp(62px, 8.1vw, 126px);
+      font-weight: 430;
+      line-height: .9;
+      letter-spacing: 0;
+    }
+
+    .italic {
+      font-style: italic;
+      font-weight: 340;
+      color: var(--bronze);
+    }
+
+    .hero-copy {
+      display: grid;
+      grid-template-columns: .82fr 1fr;
+      max-width: 820px;
+      gap: 26px;
+      align-items: start;
+      margin-bottom: 48px;
+    }
+
+    .hero-copy p {
+      color: var(--graphite);
+      font-size: clamp(18px, 1.45vw, 24px);
+      line-height: 1.42;
+    }
+
+    .geo-line {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .17em;
+      line-height: 1.65;
+      text-transform: uppercase;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero-panel {
+      position: relative;
+      min-height: 560px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .26);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .route-map {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .route-map path,
+    .route-map line {
+      fill: none;
+      stroke: rgba(23, 26, 28, .22);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .route-map .accent { stroke: var(--blue); stroke-width: 1.4; }
+    .route-map .bronze { stroke: var(--bronze); }
+    .route-map circle { fill: var(--paper-2); stroke: var(--ink); stroke-width: 1; }
+
+    .draw-line {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      transition: stroke-dashoffset 1.8s var(--ease);
+    }
+
+    .is-visible .draw-line,
+    .hero .draw-line { stroke-dashoffset: 0; }
+
+    .panel-meta {
+      position: absolute;
+      inset: auto 26px 26px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--line);
+      background: rgba(246, 244, 239, .78);
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-meta div {
+      min-height: 92px;
+      padding: 18px 16px;
+      border-right: 1px solid var(--line);
+    }
+
+    .panel-meta div:last-child { border-right: 0; }
+
+    .panel-meta strong {
+      display: block;
+      margin-bottom: 10px;
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 520;
+    }
+
+    .panel-meta span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(160px, .35fr) minmax(0, 1fr);
+      gap: clamp(24px, 6vw, 92px);
+      margin-bottom: clamp(44px, 6vw, 82px);
+      align-items: start;
+    }
+
+    .section-kicker {
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      margin-bottom: 22px;
+      font-family: var(--serif);
+      font-size: clamp(42px, 5.2vw, 82px);
+      font-weight: 390;
+      line-height: .98;
+      letter-spacing: 0;
+    }
+
+    .section-intro {
+      max-width: 720px;
+      color: var(--graphite);
+      font-size: clamp(18px, 1.55vw, 24px);
+      line-height: 1.45;
+    }
+
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--line-strong);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .audience-card {
+      min-height: 360px;
+      padding: clamp(26px, 3.6vw, 52px);
+      border-right: 1px solid var(--line);
+      transition: background .45s var(--ease), transform .45s var(--ease);
+    }
+
+    .audience-card:last-child { border-right: 0; }
+
+    .audience-card:hover {
+      background: rgba(255, 255, 255, .38);
+      transform: translateY(-6px);
+    }
+
+    .index {
+      display: block;
+      margin-bottom: 80px;
+      color: var(--bronze);
+      font-family: var(--serif);
+      font-size: 22px;
+      font-style: italic;
+    }
+
+    .audience-card h3,
+    .value-card h3,
+    .format-card h3 {
+      margin-bottom: 20px;
+      font-family: var(--serif);
+      font-size: clamp(26px, 2.4vw, 36px);
+      font-weight: 440;
+      line-height: 1.05;
+    }
+
+    .audience-card p,
+    .value-card p,
+    .format-card p,
+    .about-copy p {
+      color: var(--graphite);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .value-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+      gap: clamp(34px, 7vw, 96px);
+      align-items: start;
+    }
+
+    .value-statement {
+      position: sticky;
+      top: 116px;
+      padding: 42px;
+      border: 1px solid var(--line);
+      background: var(--ink);
+      color: var(--paper-2);
+    }
+
+    .value-statement h3 {
+      margin: 0 0 20px;
+      font-family: var(--serif);
+      font-size: clamp(32px, 3.2vw, 50px);
+      font-weight: 390;
+      line-height: 1;
+    }
+
+    .value-statement p {
+      margin-bottom: 28px;
+      color: rgba(246, 244, 239, .72);
+      font-size: clamp(19px, 1.8vw, 28px);
+      line-height: 1.45;
+    }
+
+    .thin-rule {
+      display: block;
+      width: 100%;
+      height: 1px;
+      margin: 32px 0;
+      background: rgba(246, 244, 239, .2);
+    }
+
+    .value-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .value-card {
+      padding: clamp(28px, 4vw, 52px);
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .2);
+      transition: background .4s var(--ease), border-color .4s var(--ease), transform .4s var(--ease);
+    }
+
+    .value-card:hover {
+      border-color: rgba(23, 26, 28, .28);
+      background: rgba(255, 255, 255, .48);
+      transform: translateX(8px);
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 26px;
+    }
+
+    .flow span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid rgba(246, 244, 239, .22);
+      color: rgba(246, 244, 239, .82);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .formats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .format-card {
+      position: relative;
+      min-height: 420px;
+      padding: clamp(28px, 3.5vw, 48px);
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, rgba(23, 26, 28, .045) 1px, transparent 1px) 0 0 / 34px 34px,
+        linear-gradient(rgba(23, 26, 28, .035) 1px, transparent 1px) 0 0 / 34px 34px,
+        rgba(255, 255, 255, .23);
+      overflow: hidden;
+      transition: transform .45s var(--ease), background .45s var(--ease), border-color .45s var(--ease);
+    }
+
+    .format-card::after {
+      content: "";
+      position: absolute;
+      right: clamp(24px, 3vw, 46px);
+      bottom: clamp(24px, 3vw, 44px);
+      width: 44%;
+      height: 32%;
+      border: 1px solid rgba(23, 26, 28, .08);
+      background:
+        linear-gradient(90deg, rgba(61, 98, 114, .16) 1px, transparent 1px) 0 0 / 28px 28px,
+        linear-gradient(rgba(155, 112, 66, .12) 1px, transparent 1px) 0 0 / 28px 28px;
+      opacity: .55;
+      transform: skewX(-12deg);
+      pointer-events: none;
+    }
+
+    .format-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .format-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(23, 26, 28, .3);
+      background: rgba(255, 255, 255, .52);
+    }
+
+    .format-label {
+      display: block;
+      margin-bottom: 18px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .products {
+      width: 100%;
+      background: var(--ink);
+      color: var(--paper-2);
+    }
+
+    .products .section {
+      border-color: rgba(246, 244, 239, .16);
+    }
+
+    .products .section-title,
+    .products .section-intro { color: var(--paper-2); }
+
+    .products .section-intro,
+    .products .section-kicker { color: rgba(246, 244, 239, .7); }
+
+    .product-board {
+      display: grid;
+      grid-template-columns: .86fr 1.14fr;
+      gap: clamp(28px, 5vw, 72px);
+      align-items: start;
+    }
+
+    .product-note {
+      padding: 38px;
+      border: 1px solid rgba(246, 244, 239, .16);
+      color: rgba(246, 244, 239, .72);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 54px;
+      padding: 0 18px;
+      border: 1px solid rgba(246, 244, 239, .18);
+      color: rgba(246, 244, 239, .86);
+      font-size: clamp(14px, 1.2vw, 16px);
+      font-weight: 650;
+      transition: color .35s var(--ease), background .35s var(--ease), border-color .35s var(--ease), transform .35s var(--ease);
+    }
+
+    .chip::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      margin-right: 12px;
+      background: var(--bronze);
+      transform: rotate(45deg);
+    }
+
+    .chip:hover {
+      transform: translateY(-3px);
+      border-color: rgba(246, 244, 239, .55);
+      background: rgba(246, 244, 239, .08);
+      color: var(--paper-2);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+      gap: clamp(34px, 7vw, 96px);
+      align-items: start;
+    }
+
+    .about-copy .lead {
+      color: var(--ink);
+      font-size: clamp(20px, 2vw, 30px);
+      line-height: 1.38;
+    }
+
+    .route-list {
+      display: grid;
+      border-top: 1px solid var(--line-strong);
+    }
+
+    .route-item {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 20px;
+      align-items: center;
+      min-height: 74px;
+      border-bottom: 1px solid var(--line);
+      color: var(--graphite);
+      font-size: clamp(17px, 1.6vw, 24px);
+    }
+
+    .route-dot {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--line-strong);
+      background: rgba(255, 255, 255, .42);
+      transform: rotate(45deg);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin-top: 56px;
+      background: var(--line);
+    }
+
+    .metric {
+      min-height: 174px;
+      padding: 28px;
+      background: var(--paper);
+    }
+
+    .metric strong {
+      display: block;
+      margin-bottom: 16px;
+      font-family: var(--serif);
+      font-size: clamp(42px, 5vw, 70px);
+      font-weight: 390;
+      line-height: .9;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .11em;
+      line-height: 1.5;
+      text-transform: uppercase;
+    }
+
+    .cta {
+      width: min(var(--max), calc(100% - var(--gutter) * 2));
+      margin: 0 auto;
+      padding: clamp(86px, 12vw, 160px) 0;
+    }
+
+    .cta-box {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: clamp(26px, 5vw, 70px);
+      align-items: end;
+      padding: clamp(34px, 6vw, 76px);
+      border: 1px solid var(--line-strong);
+      background:
+        linear-gradient(135deg, rgba(61, 98, 114, .08), transparent 36%),
+        rgba(255, 255, 255, .34);
+      box-shadow: var(--shadow);
+    }
+
+    .cta h2 {
+      max-width: 860px;
+      margin-bottom: 22px;
+      font-family: var(--serif);
+      font-size: clamp(44px, 6vw, 92px);
+      font-weight: 390;
+      line-height: .98;
+    }
+
+    .cta p {
+      max-width: 650px;
+      color: var(--graphite);
+      font-size: clamp(18px, 1.6vw, 24px);
+      line-height: 1.5;
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--line);
+      padding: 38px 0 54px;
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 24px;
+      align-items: center;
+      width: min(var(--max), calc(100% - var(--gutter) * 2));
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .footer-inner span:last-child { justify-self: end; }
+
+    .footer-credit {
+      justify-self: center;
+      text-align: center;
+    }
+
+    .footer-credit a {
+      position: relative;
+      color: var(--ink);
+    }
+
+    .footer-credit a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -3px;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(.4);
+      transform-origin: center;
+      transition: transform .35s var(--ease);
+    }
+
+    .footer-credit a:hover::after { transform: scaleX(1); }
+
+    .back-to-top {
+      position: fixed;
+      z-index: 28;
+      right: clamp(18px, 3vw, 42px);
+      bottom: clamp(18px, 3vw, 42px);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border: 1px solid var(--line-strong);
+      background: rgba(246, 244, 239, .9);
+      color: var(--ink);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(12px);
+      transition: opacity .45s var(--ease), visibility .45s var(--ease), transform .45s var(--ease), background .35s var(--ease), color .35s var(--ease);
+    }
+
+    .back-to-top.is-visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .back-to-top:hover {
+      background: var(--ink);
+      color: var(--paper-2);
+      transform: translateY(-3px);
+    }
+
+    .modal {
+      position: fixed;
+      z-index: 60;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: var(--gutter);
+      background: rgba(23, 26, 28, .34);
+      backdrop-filter: blur(12px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .4s var(--ease), visibility .4s var(--ease);
+    }
+
+    .modal.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .modal-panel {
+      position: relative;
+      width: min(680px, 100%);
+      padding: clamp(28px, 5vw, 54px);
+      border: 1px solid var(--line-strong);
+      background: var(--paper);
+      box-shadow: 0 34px 120px rgba(23, 26, 28, .22);
+      transform: translateY(22px) scale(.985);
+      transition: transform .45s var(--ease);
+    }
+
+    .modal.is-open .modal-panel {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .28);
+    }
+
+    .modal-close::before,
+    .modal-close::after {
+      content: "";
+      position: absolute;
+      left: 13px;
+      right: 13px;
+      top: 21px;
+      height: 1px;
+      background: var(--ink);
+    }
+
+    .modal-close::before { transform: rotate(45deg); }
+    .modal-close::after { transform: rotate(-45deg); }
+
+    .modal h2 {
+      max-width: 520px;
+      margin-bottom: 16px;
+      font-family: var(--serif);
+      font-size: clamp(38px, 5vw, 64px);
+      font-weight: 390;
+      line-height: 1;
+    }
+
+    .modal p {
+      max-width: 520px;
+      margin-bottom: 32px;
+      color: var(--graphite);
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .contact-form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .32);
+      color: var(--ink);
+      font: 500 15px/1.4 var(--sans);
+      padding: 15px 16px;
+      outline: 0;
+      transition: border-color .3s var(--ease), background .3s var(--ease);
+    }
+
+    .field textarea {
+      min-height: 128px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: var(--ink);
+      background: var(--paper-2);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px) scale(.985);
+      transition: opacity .9s var(--ease), transform .9s var(--ease);
+      transition-delay: var(--delay, 0ms);
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    @media (max-width: 1060px) {
+      .main-nav,
+      .header-actions .btn { display: none; }
+
+      .menu-toggle {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, .28);
+      }
+
+      .menu-toggle span,
+      .menu-toggle::before,
+      .menu-toggle::after {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 1px;
+        background: var(--ink);
+        transition: transform .35s var(--ease), opacity .35s var(--ease);
+      }
+
+      .menu-toggle::before { transform: translateY(-6px); }
+      .menu-toggle::after { transform: translateY(6px); }
+
+      body.nav-open .menu-toggle span { opacity: 0; }
+      body.nav-open .menu-toggle::before { transform: rotate(45deg); }
+      body.nav-open .menu-toggle::after { transform: rotate(-45deg); }
+
+      .mobile-panel {
+        position: fixed;
+        z-index: 29;
+        inset: 82px 0 0;
+        display: grid;
+        align-content: start;
+        gap: 4px;
+        padding: 28px var(--gutter);
+        background: var(--paper);
+        border-top: 1px solid var(--line);
+        transform: translateY(-12px);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity .35s var(--ease), transform .35s var(--ease), visibility .35s var(--ease);
+      }
+
+      body.nav-open .mobile-panel {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+
+      body.nav-open main,
+      body.nav-open .site-footer,
+      body.nav-open .back-to-top {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .mobile-panel a {
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+        font-family: var(--serif);
+        font-size: clamp(30px, 9vw, 58px);
+        line-height: 1;
+      }
+
+      .hero,
+      .value-wrap,
+      .product-board,
+      .about-grid,
+      .cta-box {
+        grid-template-columns: 1fr;
+      }
+
+      .hero { align-items: start; min-height: auto; }
+      .hero-panel { min-height: 470px; }
+      .value-statement { position: relative; top: auto; }
+      .formats-grid { grid-template-columns: 1fr; }
+      .format-card { min-height: 340px; }
+    }
+
+    @media (max-width: 760px) {
+      body {
+        background:
+          radial-gradient(circle at 80% 0%, rgba(61, 98, 114, .08), transparent 20rem),
+          var(--paper);
+      }
+
+      .header-inner { height: 72px; }
+      .brand { min-width: auto; }
+      .brand-name span:first-child { font-size: 12px; }
+      .brand-name span:last-child { font-size: 9px; }
+      .lang-switch { display: none; }
+      .mobile-panel { inset: 72px 0 0; }
+
+      .section {
+        padding: 72px 0;
+        scroll-margin-top: 72px;
+      }
+
+      .hero {
+        padding-top: 140px;
+        gap: 34px;
+      }
+
+      h1 {
+        max-width: 100%;
+        font-size: clamp(46px, 13vw, 58px);
+        line-height: .96;
+      }
+
+      .hero-copy,
+      .section-head,
+      .audience-grid,
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy { margin-bottom: 34px; }
+      .hero-actions .btn { width: 100%; }
+
+      .hero-panel {
+        min-height: 410px;
+        margin-left: calc(var(--gutter) * -1);
+        margin-right: calc(var(--gutter) * -1);
+        border-left: 0;
+        border-right: 0;
+      }
+
+      .panel-meta {
+        grid-template-columns: 1fr;
+        inset: auto 18px 18px;
+      }
+
+      .panel-meta div {
+        min-height: 66px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .panel-meta div:last-child { border-bottom: 0; }
+
+      .audience-card {
+        min-height: 0;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .audience-card:last-child { border-bottom: 0; }
+      .index { margin-bottom: 42px; }
+      .value-statement,
+      .product-note { padding: 28px; }
+      .flow span { flex: 1 1 auto; justify-content: center; }
+      .chip { width: 100%; }
+      .route-item { grid-template-columns: 32px 1fr; min-height: 64px; gap: 14px; }
+      .route-dot { width: 20px; height: 20px; }
+      .cta-box { padding: 28px; }
+      .cta .btn { width: 100%; }
+      .footer-inner {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .footer-inner span:last-child,
+      .footer-credit {
+        justify-self: start;
+        text-align: left;
+      }
+
+      .back-to-top {
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+
+      .draw-line { stroke-dashoffset: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <div class="header-inner">
+      <a class="brand" href="#top" aria-label="Dawnerz Bridge home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name"><span>Dawnerz</span><span>Bridge</span></span>
+      </a>
+
+      <nav class="main-nav" aria-label="Primary navigation">
+        <a class="nav-link" href="#audience">Для кого</a>
+        <a class="nav-link" href="#value">Цінність</a>
+        <a class="nav-link" href="#formats">Формати співпраці</a>
+        <a class="nav-link" href="#products">Товарні напрямки</a>
+        <a class="nav-link" href="#about">Про нас</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switch" aria-label="Language switcher">
+          <button class="is-active" type="button">UA</button>
+          <button type="button">EN</button>
+          <button type="button">DE</button>
+        </div>
+        <button class="btn" type="button" data-modal-open>Обговорити задачу</button>
+        <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span></button>
+      </div>
+    </div>
+    <nav class="mobile-panel" aria-label="Mobile navigation">
+      <a href="#audience">Для кого</a>
+      <a href="#value">Цінність</a>
+      <a href="#formats">Формати</a>
+      <a href="#products">Напрямки</a>
+      <a href="#about">Про нас</a>
+      <a href="#contact">Контакт</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section hero" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <p class="eyebrow reveal">B2B · Україна · Європа · США</p>
+        <h1 id="hero-title" class="reveal" style="--delay: 90ms">Ваш партнер <span class="italic">в міжнародній</span> торгівлі</h1>
+        <div class="hero-copy reveal" style="--delay: 170ms">
+          <p>Dawnerz Bridge допомагає компаніям знаходити покупців, постачальників і супроводжувати міжнародні B2B-угоди.</p>
+          <div class="geo-line">пошук покупців<br>пошук постачальників<br>супровід угод</div>
+        </div>
+        <div class="hero-actions reveal" style="--delay: 240ms">
+          <button class="btn btn-primary" type="button" data-modal-open>Обговорити задачу</button>
+          <a class="btn" href="#value">Дізнатися більше</a>
+        </div>
+      </div>
+
+      <aside class="hero-panel reveal" style="--delay: 220ms" aria-label="Abstract international trade routes">
+        <svg class="route-map" viewBox="0 0 520 640" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="78" y1="0" x2="78" y2="640"></line>
+          <line x1="248" y1="0" x2="248" y2="640"></line>
+          <line x1="418" y1="0" x2="418" y2="640"></line>
+          <line x1="0" y1="116" x2="520" y2="116"></line>
+          <line x1="0" y1="306" x2="520" y2="306"></line>
+          <line x1="0" y1="486" x2="520" y2="486"></line>
+          <path class="draw-line accent" pathLength="1" d="M64 456 C142 260 208 214 318 198 C396 186 446 146 474 78"></path>
+          <path class="draw-line bronze" pathLength="1" d="M78 126 C150 246 240 284 333 318 C398 342 446 398 476 520"></path>
+          <path class="draw-line" pathLength="1" d="M44 330 C118 350 174 384 244 404 C326 428 396 398 488 350"></path>
+          <circle cx="78" cy="126" r="6"></circle>
+          <circle cx="318" cy="198" r="6"></circle>
+          <circle cx="476" cy="520" r="6"></circle>
+          <circle cx="244" cy="404" r="6"></circle>
+        </svg>
+        <div class="panel-meta">
+          <div><strong>UA</strong><span>виробники та постачання</span></div>
+          <div><strong>EU</strong><span>ринок, партнери, канали</span></div>
+          <div><strong>US</strong><span>власні компанії Dawnerz</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section" id="audience" aria-labelledby="audience-title">
+      <div class="section-head">
+        <span class="section-kicker reveal">Для кого</span>
+        <div>
+          <h2 class="section-title reveal" id="audience-title" style="--delay: 80ms">Хто звертається до нас</h2>
+          <p class="section-intro reveal" style="--delay: 150ms">Ми працюємо з компаніями, яким потрібен надійний партнер у міжнародній B2B-торговелі.</p>
+        </div>
+      </div>
+      <div class="audience-grid">
+        <article class="audience-card reveal">
+          <span class="index">01</span>
+          <h3>Виробники та постачальники</h3>
+          <p>Компанії, які виробляють або постачають B2B-товари та хочуть знаходити покупців за кордоном.</p>
+        </article>
+        <article class="audience-card reveal" style="--delay: 110ms">
+          <span class="index">02</span>
+          <h3>Покупці, імпортери та дистриб’ютори</h3>
+          <p>Компанії, які шукають виробників, постачальників або нові товарні лінійки в інших країнах.</p>
+        </article>
+        <article class="audience-card reveal" style="--delay: 220ms">
+          <span class="index">03</span>
+          <h3>Комерційні партнери та агенти</h3>
+          <p>Агенти, логістичні компанії, галузеві партнери та організації, які працюють з виробниками, покупцями або міжнародними поставками.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="value" aria-labelledby="value-title">
+      <div class="section-head">
+        <span class="section-kicker reveal">Наша цінність</span>
+        <div>
+          <h2 class="section-title reveal" id="value-title" style="--delay: 80ms">Три задачі</h2>
+          <p class="section-intro reveal" style="--delay: 150ms">Наша цінність не в «пошуку контакту» чи підготовці документів. Ми закриваємо три ключові задачі.</p>
+        </div>
+      </div>
+      <div class="value-wrap">
+        <aside class="value-statement reveal">
+          <h3>Повний цикл угоди</h3>
+          <p>Ідея → дослідження → замовлення → поставка → оплата → наступне замовлення.</p>
+          <span class="thin-rule"></span>
+          <div class="flow" aria-label="Deal flow">
+            <span>Ідея</span>
+            <span>Дослідження</span>
+            <span>Замовлення</span>
+            <span>Поставка</span>
+            <span>Оплата</span>
+          </div>
+        </aside>
+        <div class="value-list">
+          <article class="value-card reveal">
+            <h3>Створення нових каналів продажу або постачання</h3>
+            <p>Знаходимо реальних контрагентів і формуємо стабільні комерційні зв’язки.</p>
+          </article>
+          <article class="value-card reveal" style="--delay: 110ms">
+            <h3>Захист комерційних інтересів замовника</h3>
+            <p>Представляємо і відстоюємо інтереси замовника на переговорах та кожному етапі угоди.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="formats" aria-labelledby="formats-title">
+      <div class="section-head">
+        <span class="section-kicker reveal">Формати співпраці</span>
+        <div>
+          <h2 class="section-title reveal" id="formats-title" style="--delay: 80ms">Як ми працюємо</h2>
+          <p class="section-intro reveal" style="--delay: 150ms">Оберіть модель, яка підходить для вашого бізнесу та поточних задач.</p>
+        </div>
+      </div>
+      <div class="formats-grid">
+        <article class="format-card reveal">
+          <span class="format-label">Commercial Mandate</span>
+          <h3>Агентська модель</h3>
+          <p>Шукаємо покупців, ведемо комунікацію, беремо участь у переговорах і супроводжуємо перші та повторні угоди відповідно до отриманого мандату.</p>
+        </article>
+        <article class="format-card reveal" style="--delay: 110ms">
+          <span class="format-label">Commercial Representation</span>
+          <h3>Комерційне представництво</h3>
+          <p>Представляємо виробника або постачальника на погодженій території чи в окремому сегменті: продажі, партнери, виставки, маркетинг, частка ринку.</p>
+        </article>
+        <article class="format-card reveal" style="--delay: 220ms">
+          <span class="format-label">Trading Model</span>
+          <h3>Торгова модель</h3>
+          <p>Купуємо товар і продаємо його далі від власного імені через власні компанії Dawnerz.</p>
+        </article>
+      </div>
+    </section>
+
+    <div class="products" id="products">
+      <section class="section" aria-labelledby="products-title">
+        <div class="section-head">
+          <span class="section-kicker reveal">Товарні напрямки</span>
+          <div>
+            <h2 class="section-title reveal" id="products-title" style="--delay: 80ms">Непродовольчі B2B-товари</h2>
+            <p class="section-intro reveal" style="--delay: 150ms">Товари для виробництва, торгівлі, складу, логістики або подальшого використання в бізнесі.</p>
+          </div>
+        </div>
+        <div class="product-board">
+          <p class="product-note reveal">Категорії подані як гнучка система: їх легко масштабувати, перекладати та адаптувати під різні мовні версії без зміни графіки.</p>
+          <div class="chips">
+            <span class="chip reveal">промислове пакування</span>
+            <span class="chip reveal" style="--delay: 40ms">транспортне пакування</span>
+            <span class="chip reveal" style="--delay: 80ms">пакування для сипучих вантажів</span>
+            <span class="chip reveal" style="--delay: 120ms">технічний текстиль</span>
+            <span class="chip reveal" style="--delay: 160ms">металеві вироби</span>
+            <span class="chip reveal" style="--delay: 200ms">складське обладнання</span>
+            <span class="chip reveal" style="--delay: 240ms">промислові компоненти</span>
+            <span class="chip reveal" style="--delay: 280ms">дерев’яні та меблеві компоненти</span>
+            <span class="chip reveal" style="--delay: 320ms">будівельні товари</span>
+            <span class="chip reveal" style="--delay: 360ms">виробничі товари</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="section-head">
+        <span class="section-kicker reveal">Про нас</span>
+        <div>
+          <h2 class="section-title reveal" id="about-title" style="--delay: 80ms">Dawnerz Bridge</h2>
+          <p class="section-intro reveal" style="--delay: 150ms">Торгово-комерційний партнер у побудові та супроводі міжнародних B2B-угод.</p>
+        </div>
+      </div>
+      <div class="about-grid">
+        <div class="about-copy reveal">
+          <p class="lead">Працюємо на перетині України, Європи та США. Маємо власні торгові компанії у США та Німеччині.</p>
+          <p>Розуміємо повний цикл угод: товар, ціна, документи, логістика, оплата, виконання.</p>
+          <div class="metrics">
+            <div class="metric"><strong data-count="5">0</strong><span>років досвіду</span></div>
+            <div class="metric"><strong>US</strong><span>власна компанія</span></div>
+            <div class="metric"><strong>DE</strong><span>власна компанія</span></div>
+          </div>
+        </div>
+        <div class="route-list reveal" style="--delay: 120ms" aria-label="Географія роботи">
+          <div class="route-item"><span class="route-dot"></span><span>Україна → Європа</span></div>
+          <div class="route-item"><span class="route-dot"></span><span>Україна → США</span></div>
+          <div class="route-item"><span class="route-dot"></span><span>Європа / США → Україна</span></div>
+          <div class="route-item"><span class="route-dot"></span><span>Європа → США</span></div>
+          <div class="route-item"><span class="route-dot"></span><span>Між країнами Європи</span></div>
+          <div class="route-item"><span class="route-dot"></span><span>Локальні партнери в США, Канаді, Європі</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta" id="contact" aria-labelledby="contact-title">
+      <div class="cta-box reveal">
+        <div>
+          <h2 id="contact-title">Готові обговорити вашу задачу?</h2>
+          <p>Розкажіть про ваш продукт або потребу — знайдемо формат співпраці та обговоримо перші кроки.</p>
+        </div>
+        <button class="btn btn-primary" type="button" data-modal-open>Обговорити задачу</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>Dawnerz Bridge</span>
+      <span class="footer-credit">© 2026 · developed by <a href="https://bonddesign.top" target="_blank" rel="noopener">bonddesign</a></span>
+      <span>International B2B trade partner</span>
+    </div>
+  </footer>
+
+  <button class="back-to-top" type="button" aria-label="Повернутися нагору">↑</button>
+
+  <div class="modal" id="contact-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-panel" role="document">
+      <button class="modal-close" type="button" aria-label="Закрити форму" data-modal-close></button>
+      <h2 id="modal-title">Обговорити задачу</h2>
+      <p>Залиште короткий опис продукту або потреби. Ми повернемося з відповідним форматом співпраці та першими кроками.</p>
+      <form class="contact-form">
+        <div class="field">
+          <label for="contact-name">Ім’я</label>
+          <input id="contact-name" name="name" type="text" autocomplete="name" placeholder="Ваше ім’я">
+        </div>
+        <div class="field">
+          <label for="contact-email">Пошта</label>
+          <input id="contact-email" name="email" type="email" autocomplete="email" placeholder="name@company.com">
+        </div>
+        <div class="field">
+          <label for="contact-message">Коментар</label>
+          <textarea id="contact-message" name="message" placeholder="Коротко опишіть продукт, потребу або напрямок співпраці"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Надіслати запит</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const header = document.querySelector(".site-header");
+    const reveals = document.querySelectorAll(".reveal");
+    const navLinks = document.querySelectorAll(".main-nav .nav-link");
+    const sections = [...navLinks].map((link) => document.querySelector(link.getAttribute("href"))).filter(Boolean);
+    const menuToggle = document.querySelector(".menu-toggle");
+    const mobileLinks = document.querySelectorAll(".mobile-panel a");
+    const modal = document.querySelector("#contact-modal");
+    const modalOpeners = document.querySelectorAll("[data-modal-open]");
+    const modalClose = document.querySelector("[data-modal-close]");
+    const contactForm = document.querySelector(".contact-form");
+    const backToTop = document.querySelector(".back-to-top");
+
+    const updateHeader = () => {
+      header.classList.toggle("is-scrolled", window.scrollY > 18);
+    };
+
+    updateHeader();
+    window.addEventListener("scroll", updateHeader, { passive: true });
+
+    const setActiveNav = () => {
+      const headerOffset = header.offsetHeight + 28;
+      const current = sections.reduce((active, section) => {
+        const top = section.getBoundingClientRect().top - headerOffset;
+        return top <= 0 ? section : active;
+      }, null);
+
+      navLinks.forEach((link) => {
+        link.classList.toggle("is-active", Boolean(current) && link.getAttribute("href") === `#${current.id}`);
+      });
+    };
+
+    const scheduleActiveNav = () => {
+      requestAnimationFrame(setActiveNav);
+      window.setTimeout(setActiveNav, 120);
+    };
+
+    scheduleActiveNav();
+    window.addEventListener("load", scheduleActiveNav);
+    window.addEventListener("hashchange", scheduleActiveNav);
+    window.addEventListener("scroll", setActiveNav, { passive: true });
+    window.addEventListener("resize", setActiveNav);
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.16, rootMargin: "0px 0px -8% 0px" });
+
+    reveals.forEach((node) => revealObserver.observe(node));
+
+    const revealVisibleItems = () => {
+      reveals.forEach((node) => {
+        const rect = node.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.92 && rect.bottom > 0) {
+          node.classList.add("is-visible");
+          revealObserver.unobserve(node);
+        }
+      });
+    };
+
+    window.addEventListener("load", revealVisibleItems);
+    window.addEventListener("hashchange", () => requestAnimationFrame(revealVisibleItems));
+    window.addEventListener("scroll", revealVisibleItems, { passive: true });
+    requestAnimationFrame(revealVisibleItems);
+
+    const countNode = document.querySelector("[data-count]");
+    if (countNode && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const countObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const end = Number(countNode.dataset.count);
+          const started = performance.now();
+          const duration = 1000;
+          const tick = (now) => {
+            const progress = Math.min((now - started) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            countNode.textContent = Math.round(eased * end);
+            if (progress < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+          countObserver.disconnect();
+        });
+      }, { threshold: 0.6 });
+      countObserver.observe(countNode);
+    } else if (countNode) {
+      countNode.textContent = countNode.dataset.count;
+    }
+
+    menuToggle.addEventListener("click", () => {
+      const isOpen = document.body.classList.toggle("nav-open");
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+      menuToggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+    });
+
+    mobileLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        document.body.classList.remove("nav-open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-label", "Open menu");
+      });
+    });
+
+    const openModal = () => {
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+      window.setTimeout(() => document.querySelector("#contact-name").focus(), 120);
+    };
+
+    const closeModal = () => {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+    };
+
+    modalOpeners.forEach((button) => button.addEventListener("click", openModal));
+    modalClose.addEventListener("click", closeModal);
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) closeModal();
+    });
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+    });
+    contactForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      closeModal();
+    });
+
+    const updateBackToTop = () => {
+      backToTop.classList.toggle("is-visible", window.scrollY > window.innerHeight * 0.9);
+    };
+
+    updateBackToTop();
+    window.addEventListener("scroll", updateBackToTop, { passive: true });
+    backToTop.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+</body>
+</html>
