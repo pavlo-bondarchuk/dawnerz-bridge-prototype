@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dawnerz Bridge — Page Mockup</title>
+  <meta name="description" content="Presentation mockup and design description for the Dawnerz Bridge interactive homepage prototype.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,50..100,0..1&family=Manrope:wght@300..800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f6f4ef;
+      --paper-2: #fbfaf7;
+      --ink: #171a1c;
+      --graphite: #292e31;
+      --muted: #687177;
+      --line: rgba(23, 26, 28, .13);
+      --line-strong: rgba(23, 26, 28, .24);
+      --blue: #3d6272;
+      --olive: #596353;
+      --bronze: #9b7042;
+      --steel: #7a8589;
+      --sans: "Manrope", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --serif: "Fraunces", Georgia, "Times New Roman", serif;
+      --max: 1240px;
+      --gutter: clamp(20px, 4vw, 56px);
+      --ease: cubic-bezier(.22, 1, .36, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      background: var(--paper);
+      color: var(--ink);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      font-family: var(--sans);
+      background:
+        linear-gradient(90deg, rgba(23, 26, 28, .04) 1px, transparent 1px) center top / calc((100vw - min(var(--max), calc(100vw - var(--gutter) * 2))) / 2 + min(var(--max), calc(100vw - var(--gutter) * 2)) / 12) 100%,
+        radial-gradient(circle at 74% 6%, rgba(61, 98, 114, .1), transparent 32rem),
+        var(--paper);
+      color: var(--ink);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .mockup-shell {
+      width: min(var(--max), calc(100% - var(--gutter) * 2));
+      margin: 0 auto;
+      padding: clamp(36px, 6vw, 78px) 0;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      line-height: .92;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--line-strong);
+      background: rgba(255, 255, 255, .36);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 11px 7px;
+      border-top: 1px solid var(--ink);
+      transform: skewY(-24deg);
+    }
+
+    .brand-mark::after {
+      inset: 20px 7px;
+      border-color: var(--bronze);
+    }
+
+    .brand span span {
+      display: block;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: .24em;
+    }
+
+    .topbar a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 0 18px;
+      border: 1px solid var(--line-strong);
+      background:
+        linear-gradient(112deg, #171a1c 0%, #233137 45%, #3d6272 74%, #596353 100%);
+      color: var(--paper-2);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(320px, .58fr);
+      gap: clamp(36px, 7vw, 92px);
+      align-items: end;
+      padding: clamp(58px, 9vw, 110px) 0 56px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 26px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 42px;
+      height: 1px;
+      background: currentColor;
+      opacity: .55;
+    }
+
+    h1,
+    h2,
+    p { margin-top: 0; }
+
+    h1 {
+      max-width: 820px;
+      margin-bottom: 26px;
+      font-family: var(--serif);
+      font-size: clamp(54px, 8.4vw, 118px);
+      font-weight: 430;
+      line-height: .9;
+      letter-spacing: 0;
+    }
+
+    h1 em {
+      color: var(--bronze);
+      font-style: italic;
+      font-weight: 340;
+    }
+
+    .hero p {
+      max-width: 550px;
+      color: var(--graphite);
+      font-size: clamp(18px, 1.55vw, 23px);
+      line-height: 1.52;
+    }
+
+    .meta-card {
+      border: 1px solid var(--line-strong);
+      background:
+        linear-gradient(135deg, rgba(61, 98, 114, .1), transparent 42%),
+        rgba(255, 255, 255, .34);
+      box-shadow: 0 28px 80px rgba(23, 26, 28, .08);
+      padding: clamp(26px, 4vw, 46px);
+    }
+
+    .meta-card h2 {
+      margin-bottom: 16px;
+      font-family: var(--serif);
+      font-size: clamp(34px, 4.6vw, 58px);
+      font-weight: 390;
+      line-height: 1;
+    }
+
+    .meta-card p {
+      color: var(--graphite);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      margin-top: 26px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+
+    .swatch {
+      min-height: 78px;
+      padding: 10px;
+      background: var(--paper-2);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .swatch:nth-child(2) { background: var(--ink); color: var(--paper-2); }
+    .swatch:nth-child(3) { background: var(--blue); color: var(--paper-2); }
+    .swatch:nth-child(4) { background: var(--olive); color: var(--paper-2); }
+    .swatch:nth-child(5) { background: var(--bronze); color: var(--paper-2); }
+
+    .preview-section {
+      padding: clamp(48px, 8vw, 92px) 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(120px, .34fr) minmax(0, 1fr);
+      gap: clamp(28px, 6vw, 90px);
+      align-items: start;
+      margin-bottom: 36px;
+    }
+
+    .section-kicker {
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .section-head h2 {
+      margin-bottom: 0;
+      font-family: var(--serif);
+      font-size: clamp(42px, 6vw, 78px);
+      font-weight: 390;
+      line-height: .98;
+    }
+
+    .frames {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 390px);
+      gap: clamp(24px, 4vw, 44px);
+      align-items: start;
+    }
+
+    .frame {
+      overflow: hidden;
+      border: 1px solid var(--line-strong);
+      background: var(--paper-2);
+      box-shadow: 0 28px 80px rgba(23, 26, 28, .08);
+    }
+
+    .frame-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 46px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .frame-label span:last-child {
+      color: var(--bronze);
+      font-family: var(--serif);
+      font-size: 19px;
+      font-style: italic;
+      font-weight: 360;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    iframe {
+      display: block;
+      width: 100%;
+      border: 0;
+      background: var(--paper);
+    }
+
+    .desktop-frame iframe { height: min(780px, 65vw); }
+    .mobile-frame iframe { height: 760px; }
+
+    .description-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+
+    .description-card {
+      min-height: 260px;
+      padding: clamp(24px, 4vw, 42px);
+      background: rgba(255, 255, 255, .24);
+    }
+
+    .description-card h3 {
+      margin: 0 0 18px;
+      font-family: var(--serif);
+      font-size: clamp(26px, 3vw, 38px);
+      font-weight: 390;
+      line-height: 1.05;
+    }
+
+    .description-card p {
+      margin-bottom: 0;
+      color: var(--graphite);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding-top: 32px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .frames,
+      .section-head,
+      .description-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .desktop-frame iframe,
+      .mobile-frame iframe {
+        height: 680px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar,
+      .footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .palette { grid-template-columns: 1fr; }
+      .desktop-frame iframe,
+      .mobile-frame iframe { height: 620px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="mockup-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Dawnerz<span>Bridge</span></span>
+      </div>
+      <a href="./index.html">Відкрити прототип</a>
+    </header>
+
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Mockup · Homepage · B2B trade</p>
+        <h1>Преміальний прототип <em>Dawnerz Bridge</em></h1>
+        <p>Односторінковий mockup для презентації дизайн-напрямку: дорогий мінімалізм, вишукана типографіка, тонка геометрія та стримана міжнародна B2B-естетика.</p>
+      </div>
+
+      <aside class="meta-card">
+        <h2>Design direction</h2>
+        <p>Сайт не використовує буквальні експортні образи. Візуальна мова будується на сітці, маршрутах, контрасті антикви та гротеску, а також на акуратних мікроанімаціях, які реально перенести у Wix Studio.</p>
+        <div class="palette" aria-label="Color palette">
+          <div class="swatch">off-white</div>
+          <div class="swatch">graphite</div>
+          <div class="swatch">muted blue</div>
+          <div class="swatch">dark olive</div>
+          <div class="swatch">bronze</div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="preview-section" aria-labelledby="preview-title">
+      <div class="section-head">
+        <div class="section-kicker">Preview</div>
+        <h2 id="preview-title">Desktop та mobile mockup в одному файлі</h2>
+      </div>
+
+      <div class="frames">
+        <article class="frame desktop-frame">
+          <div class="frame-label"><span>Desktop layout</span><span>1440+</span></div>
+          <iframe src="./index.html?v=mockup-desktop#top" title="Dawnerz Bridge desktop prototype preview"></iframe>
+        </article>
+
+        <article class="frame mobile-frame">
+          <div class="frame-label"><span>Mobile layout</span><span>390</span></div>
+          <iframe src="./index.html?v=mockup-mobile#top" title="Dawnerz Bridge mobile prototype preview"></iframe>
+        </article>
+      </div>
+    </section>
+
+    <section class="preview-section" aria-labelledby="description-title">
+      <div class="section-head">
+        <div class="section-kicker">Description</div>
+        <h2 id="description-title">Опис концепції</h2>
+      </div>
+
+      <div class="description-grid">
+        <article class="description-card">
+          <h3>Позиціонування</h3>
+          <p>Dawnerz Bridge подано як серйозного міжнародного commercial partner для B2B trade. Акцент не на “красивому експорті”, а на довірі, системності, переговорах, пошуку контрагентів і супроводі угод.</p>
+        </article>
+
+        <article class="description-card">
+          <h3>Візуальна мова</h3>
+          <p>Основу формують off-white фон, near black типографіка, тонка сітка, steel grey лінії та акценти muted blue, olive і bronze. Абстрактні SVG-маршрути замінюють шаблонні фото, прапори, глобуси та контейнеровози.</p>
+        </article>
+
+        <article class="description-card">
+          <h3>Motion system</h3>
+          <p>Анімації побудовані як повторювана система: scroll-driven поява блоків, послідовне проявлення слів, м’яке ковзання чіпів і route-items, gradient-hover кнопок та легкий hero tilt. Ефекти залишаються легкими для адаптації у Wix Studio.</p>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>Dawnerz Bridge mockup</span>
+      <span>© 2026 · developed by bonddesign</span>
+    </footer>
+  </div>
+</body>
+</html>
